@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: econnect_postgres
+    environment:
+      POSTGRES_USER: econnect_user
+      POSTGRES_PASSWORD: econnect_password
+      POSTGRES_DB: econnect_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U econnect_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Next.js Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: econnect_app
+    environment:
+      DATABASE_URL: postgresql://econnect_user:econnect_password@postgres:5432/econnect_db
+      NEXT_PUBLIC_API_URL: http://localhost:3000
+      JWT_SECRET: your-super-secret-jwt-key-min-32-chars-for-prod
+      JWT_EXPIRATION: 7d
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./public/uploads:/app/public/uploads
+
+volumes:
+  postgres_data:
+
+networks:
+  default:
+    name: econnect_network

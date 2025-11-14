@@ -1,0 +1,126 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum UserType {
+  PRODUCER
+  COMPANY
+  ADMIN
+}
+
+enum AreaStatus {
+  PENDING
+  VALIDATED
+  REJECTED
+}
+
+enum CreditStatus {
+  AVAILABLE
+  SOLD
+  RETIRED
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+// Models
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  password  String
+  name      String
+  type      UserType
+  avatar    String?
+  bio       String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Relations
+  areas        Area[]
+  transactions Transaction[] @relation("buyer")
+  soldCredits  Transaction[] @relation("seller")
+
+  @@map("users")
+}
+
+model Area {
+  id          String     @id @default(cuid())
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  hectares    Float
+  location    String? // JSON string com coordenadas {lat, lng}
+  status      AreaStatus @default(PENDING)
+  documentUrl String?
+  imageUrl    String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relations
+  credits Credit[]
+
+  @@index([userId])
+  @@map("areas")
+}
+
+model Credit {
+  id        String     @id @default(cuid())
+  areaId    String
+  area      Area       @relation(fields: [areaId], references: [id], onDelete: Cascade)
+  tokenId   String     @unique
+  quantity  Float // Em toneladas de CO2
+  status    CreditStatus @default(AVAILABLE)
+  price     Float? // Preço por unidade em reais
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Relations
+  transactions Transaction[]
+
+  @@index([areaId])
+  @@map("credits")
+}
+
+model Transaction {
+  id        String    @id @default(cuid())
+  creditId  String
+  credit    Credit    @relation(fields: [creditId], references: [id], onDelete: Cascade)
+  buyerId   String
+  buyer     User      @relation("buyer", fields: [buyerId], references: [id], onDelete: Cascade)
+  sellerId  String
+  seller    User      @relation("seller", fields: [sellerId], references: [id], onDelete: Cascade)
+  quantity  Float
+  price     Float // Preço total
+  status    TransactionStatus @default(PENDING)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([creditId])
+  @@index([buyerId])
+  @@index([sellerId])
+  @@map("transactions")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  entity    String
+  entityId  String
+  changes   String? // JSON string
+  createdAt DateTime @default(now())
+
+  @@map("audit_logs")
+}

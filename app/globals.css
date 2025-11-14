@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  @apply border-border;
+}
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  @apply bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-50;
+  line-height: 1.5;
+}
+
+a {
+  @apply text-primary hover:underline;
+}
+
+button {
+  @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+
+input,
+textarea,
+select {
+  @apply w-full rounded border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder-slate-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-50 dark:placeholder-slate-400;
+}

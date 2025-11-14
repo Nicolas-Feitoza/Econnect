@@ -1,0 +1,51 @@
+{
+  "name": "econnect",
+  "version": "1.0.0",
+  "description": "MVP Platform de Créditos de Carbono Sustentáveis",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:migrate:dev": "prisma migrate dev",
+    "db:migrate:deploy": "prisma migrate deploy",
+    "db:seed": "prisma db seed",
+    "db:studio": "prisma studio",
+    "db:reset": "prisma migrate reset --force",
+    "generate": "prisma generate",
+    "setup": "bash scripts/setup.sh"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.7.0",
+    "axios": "^1.6.2",
+    "bcryptjs": "^2.4.3",
+    "clsx": "^2.0.0",
+    "dotenv": "^16.3.1",
+    "jsonwebtoken": "^8.5.1",
+    "jspdf": "^3.0.3",
+    "next": "^14.2.33",
+    "papaparse": "^5.4.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "recharts": "^2.10.3",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^8.5.9",
+    "@types/node": "^20.19.25",
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31",
+    "prisma": "^5.7.0",
+    "tailwindcss": "^3.3.6",
+    "tsx": "^4.7.0",
+    "typescript": "^5.9.3"
+  }
+}
